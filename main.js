@@ -1,4 +1,4 @@
-import * as THREE from '/js/three.module.js'
+import * as THREE from '/threejs/three.module.js'
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000)
@@ -13,24 +13,36 @@ renderer.setSize(innerWidth, innerHeight)
 document.body.appendChild(renderer.domElement)
 
 const vertexShader = `
+varying vec2 vertexUV;
+
 void  main(){
-    gl_Position = vec4(1, 0, 0, 1);
+    vertexUV = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 }`;
 
 const fragmentShader = `
+uniform sampler2D baseTexture;
+varying vec2 vertexUV;
+
 void  main(){
-    gl_FragColor = vec4(1, 0, 0, 1);
+    
+    gl_FragColor = texture2D(baseTexture, vertexUV);
 }`;
 
 
 const base = new THREE.Mesh(new THREE.SphereGeometry(5, 100, 100), new THREE.ShaderMaterial({
+    uniforms: { 
+        baseTexture: { 
+            value: new THREE.TextureLoader().load('/images/earth2.jpg')
+        }
+    },
     vertexShader,
     fragmentShader
     })
 )
 
 scene.add(base)
-camera.position.z = 10
+camera.position.z = 15
 
 function animate() {
     requestAnimationFrame(animate)
