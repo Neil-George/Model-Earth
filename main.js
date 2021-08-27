@@ -13,22 +13,40 @@ renderer.setSize(innerWidth, innerHeight)
 document.body.appendChild(renderer.domElement)
 
 const vertexShader = `
-varying vec2 vertexUV;
+varying vec2 UV;
+varying vec3 Normal;
 
 void  main(){
-    vertexUV = uv;
+    UV = uv;
+    Normal = normal;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 }`;
 
 const fragmentShader = `
 uniform sampler2D baseTexture;
-varying vec2 vertexUV;
+varying vec2 UV;
+varying vec3 Normal;
 
 void  main(){
-    
-    gl_FragColor = texture2D(baseTexture, vertexUV);
+    vec3 sky = vec3(0, 0.5, 1) * pow(1.05 - dot(Normal, vec3(0, 0, 1)), 1.5);
+    gl_FragColor = vec4(sky + vec3(0, 0, 0.2) + texture2D(baseTexture, UV).xyz, 1);
 }`;
 
+const vertexShaderAtmosphere = `
+varying vec3 Normal;
+
+void  main(){
+    Normal = normal;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+}`;
+
+const fragmentShaderAtmosphere = `
+varying vec3 Normal;
+
+void  main(){
+    float strength = pow(0.5 - dot(Normal, vec3(0, 0, 1)), 1.5);
+    gl_FragColor = vec4(0, 0.6, 1, 1) * strength;
+}`;
 
 const base = new THREE.Mesh(new THREE.SphereGeometry(5, 100, 100), new THREE.ShaderMaterial({
     uniforms: { 
@@ -41,8 +59,19 @@ const base = new THREE.Mesh(new THREE.SphereGeometry(5, 100, 100), new THREE.Sha
     })
 )
 
+const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(5, 100, 100), new THREE.ShaderMaterial({
+    vertexShader: vertexShaderAtmosphere,
+    fragmentShader: fragmentShaderAtmosphere,
+
+    blending: THREE.AdditiveBlending,
+    side: THREE.BackSide
+    })
+)
+atmosphere.scale.set(1.5, 1.5, 1.5)
+
 scene.add(base)
-camera.position.z = 15
+scene.add(atmosphere)
+camera.position.z = 17
 
 function animate() {
     requestAnimationFrame(animate)
