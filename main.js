@@ -1,4 +1,5 @@
 import * as THREE from '/threejs/three.module.js'
+import { OrbitControls } from '/threejs/OrbitControls.js'
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000)
@@ -73,22 +74,12 @@ scene.add(base)
 scene.add(atmosphere)
 camera.position.z = 17
 
-const mouse = {
-    x: undefined,
-    y: undefined
-}
-
-addEventListener('', () => {
-    mouse.x = (event.clientX / innerWidth) * 2 - 1
-    mouse.y = (event.clientY / innerHeight) * 2 + 1
-})
-
+const controls = new OrbitControls(camera, renderer.domElement)
 
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
     base.rotation.y += 0.005
-    
 }
 
 animate()
