@@ -18,7 +18,7 @@ varying vec3 Normal;
 
 void  main(){
     UV = uv;
-    Normal = normal;
+    Normal = normalize(normalMatrix * normal);
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 }`;
 
@@ -36,7 +36,7 @@ const vertexShaderAtmosphere = `
 varying vec3 Normal;
 
 void  main(){
-    Normal = normal;
+    Normal = normalize(normalMatrix * normal);
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 }`;
 
@@ -73,10 +73,22 @@ scene.add(base)
 scene.add(atmosphere)
 camera.position.z = 17
 
+const mouse = {
+    x: undefined,
+    y: undefined
+}
+
+addEventListener('', () => {
+    mouse.x = (event.clientX / innerWidth) * 2 - 1
+    mouse.y = (event.clientY / innerHeight) * 2 + 1
+})
+
+
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
     base.rotation.y += 0.005
+    
 }
 
 animate()
