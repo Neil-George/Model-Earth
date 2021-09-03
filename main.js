@@ -74,6 +74,27 @@ scene.add(base)
 scene.add(atmosphere)
 camera.position.z = 17
 
+
+const backgroundGeometry = new THREE.BufferGeometry()
+
+const backgroundMaterial = new THREE.PointsMaterial({
+    color: 0xffffff
+})
+
+const backgroundStarVertices = []
+for (let i = 0; i < 10000; i++){
+    const x = (Math.random() - 0.5) * 2500
+    const y = (Math.random() - 0.5) * 2500
+    const z = -(Math.random() - 0.5) * 3000
+    backgroundStarVertices.push(x, y, z)
+}
+
+backgroundGeometry.setAttribute('position', new THREE.Float32BufferAttribute(backgroundStarVertices, 3))
+
+const background = new THREE.Points(backgroundGeometry, backgroundMaterial)
+scene.add(background)
+
+
 const controls = new OrbitControls(camera, renderer.domElement)
 
 function animate() {
