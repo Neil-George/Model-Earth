@@ -68,11 +68,19 @@ const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(5, 100, 100), new THR
     side: THREE.BackSide
     })
 )
-atmosphere.scale.set(1.5, 1.5, 1.5)
+atmosphere.scale.set(1.4, 1.4, 1.4)
+
+const moon = new THREE.Mesh(new THREE.SphereGeometry(5, 75, 75), new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load('/images/moonUV.jpg')
+    })
+)
+moon.scale.set(0.27, 0.27, 0.27)
+moon.position.set(5, 5, 5)
 
 scene.add(base)
 scene.add(atmosphere)
-camera.position.z = 17
+scene.add(moon)
+camera.position.z = 16
 
 
 const backgroundGeometry = new THREE.BufferGeometry()
@@ -96,11 +104,13 @@ scene.add(background)
 
 
 const controls = new OrbitControls(camera, renderer.domElement)
+controls.enableDamping = true
 
 function animate() {
+    controls.update()
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
-    base.rotation.y += 0.005
+    base.rotation.y += 0.003
 }
 
 animate()
