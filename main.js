@@ -75,7 +75,7 @@ const moon = new THREE.Mesh(new THREE.SphereGeometry(5, 75, 75), new THREE.MeshB
     })
 )
 moon.scale.set(0.27, 0.27, 0.27)
-moon.position.set(5, 5, 5)
+moon.position.set(2, 2, 2)
 
 scene.add(base)
 scene.add(atmosphere)
@@ -106,11 +106,17 @@ scene.add(background)
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 
+var t=0
 function animate() {
     controls.update()
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
     base.rotation.y += 0.003
+    
+    t+=0.003
+    moon.position.x = 10*Math.cos(t);
+    moon.position.z = 10*Math.sin(t);
+    moon.position.y = 5*Math.sin(t);
 }
 
 animate()
